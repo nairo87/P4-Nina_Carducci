@@ -1,7 +1,4 @@
-// Vanilla JavaScript - No jQuery dependency!
-
 document.addEventListener("DOMContentLoaded", function () {
-  // ===== INJECT GALLERY IMAGES =====
   const galleryImages = [
     {
       tag: "Concert",
@@ -50,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   ];
 
-  // Render gallery images
   const gallery = document.querySelector(".gallery");
   galleryImages.forEach((img) => {
     const div = document.createElement("div");
@@ -66,7 +62,10 @@ document.addEventListener("DOMContentLoaded", function () {
     gallery.appendChild(div);
   });
 
-  // ===== CAROUSEL NAVIGATION =====
+  if (window.initializeGalleries) {
+    window.initializeGalleries();
+  }
+
   let currentSlide = 0;
   const slides = document.querySelectorAll(".carousel-item");
   const totalSlides = slides.length;
@@ -93,13 +92,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Auto-rotate carousel every 5 seconds
   setInterval(() => {
     currentSlide = (currentSlide + 1) % totalSlides;
     showSlide(currentSlide);
   }, 5000);
 
-  // ===== SMOOTH SCROLL NAVIGATION =====
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -118,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // ===== FORM VALIDATION =====
   const form = document.querySelector("form");
   if (form) {
     form.addEventListener("submit", (e) => {

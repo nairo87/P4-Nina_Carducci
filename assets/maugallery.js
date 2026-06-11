@@ -1,4 +1,3 @@
-// Gallery Plugin - Vanilla JavaScript (No jQuery dependency!)
 class MauGallery {
   constructor(element, options = {}) {
     this.element = element;
@@ -124,6 +123,14 @@ class MauGallery {
 
     // Create filter buttons
     const filterContainer = document.querySelector(".gallery-filters");
+    if (!filterContainer) {
+      console.warn("Gallery filters container not found");
+      return;
+    }
+
+    // Clear existing filters
+    filterContainer.innerHTML = "";
+
     allTags.forEach((tag, index) => {
       const button = document.createElement("button");
       button.className = `nav-link ${index === 0 ? "active active-tag" : ""}`;
@@ -131,6 +138,7 @@ class MauGallery {
       button.textContent = tag;
 
       button.addEventListener("click", (e) => {
+        e.preventDefault();
         this.filterByTag(e.target);
       });
 
@@ -275,8 +283,7 @@ class MauGallery {
   }
 }
 
-// Auto-initialize all galleries
-document.addEventListener("DOMContentLoaded", () => {
+window.initializeGalleries = function () {
   document.querySelectorAll(".gallery").forEach((gallery) => {
     new MauGallery(gallery, {
       columns: { xs: 1, sm: 2, md: 3, lg: 3, xl: 3 },
@@ -286,4 +293,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tagsPosition: "top",
     });
   });
-});
+};
+
+document.addEventListener("DOMContentLoaded", window.initializeGalleries);
