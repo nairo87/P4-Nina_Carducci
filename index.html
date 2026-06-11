@@ -9,10 +9,8 @@
     />
     <meta name="theme-color" content="#fff" />
 
-    <!-- ✅ Performance: Preload critical CSS -->
     <link rel="preload" href="./assets/style.css" as="style" />
 
-    <!-- OpenGraph -->
     <meta property="og:title" content="Nina Carducci - Photographe Bordeaux" />
     <meta
       property="og:description"
@@ -53,8 +51,6 @@
     </script>
 
     <title>Nina Carducci - Photographe Bordeaux</title>
-
-    <!-- ✅ Critical CSS inline for faster first paint (NO JQUERY!) -->
     <style>
       * {
         margin: 0;
@@ -105,8 +101,6 @@
         color: #beb45a;
       }
     </style>
-
-    <!-- ✅ Non-critical CSS async loaded (NO JQUERY BLOCKING!) -->
     <link
       rel="stylesheet"
       href="./assets/style.css"
@@ -192,6 +186,8 @@
             alt="Portrait professionnel Nina Carducci"
             loading="lazy"
             decoding="async"
+            width="400"
+            height="400"
           />
         </div>
         <div id="about-me">
@@ -322,6 +318,8 @@
               alt="Appareil photo vintage"
               loading="lazy"
               decoding="async"
+              width="400"
+              height="400"
             />
           </div>
         </div>
