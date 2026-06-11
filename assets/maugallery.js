@@ -1,212 +1,289 @@
-(function ($) {
-  $.fn.mauGallery = function (options) {
-    var options = $.extend($.fn.mauGallery.defaults, options);
-    var tagsCollection = [];
+// Gallery Plugin - Vanilla JavaScript (No jQuery dependency!)
+class MauGallery {
+  constructor(element, options = {}) {
+    this.element = element;
+    this.options = {
+      columns: { xs: 1, sm: 2, md: 3, lg: 3, xl: 3 },
+      lightBox: true,
+      lightboxId: "myAwesomeLightbox",
+      showTags: true,
+      tagsPosition: "top",
+      ...options,
+    };
 
-    return this.each(function () {
-      $.fn.mauGallery.methods.createRowWrapper($(this));
+    this.init();
+  }
 
-      if (options.lightBox) {
-        $.fn.mauGallery.methods.createLightBox($(this), options.lightboxId);
+  init() {
+    this.createRowWrapper();
+
+    if (this.options.lightBox) {
+      this.createLightBox();
+    }
+
+    if (this.options.showTags) {
+      this.showItemTags();
+    }
+
+    this.attachGalleryClickListeners();
+  }
+
+  createRowWrapper() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "gallery-container";
+    this.element.parentNode.insertBefore(wrapper, this.element);
+    wrapper.appendChild(this.element);
+  }
+
+  createLightBox() {
+    const style = document.createElement("style");
+    style.textContent = `
+      .modal-lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+      .modal-lightbox__container {
+        position: relative;
+        width: 90%;
+        max-width: 900px;
+      }
+      .lightboxImage {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 40px;
+        cursor: pointer;
+        z-index: 10000;
+        transition: opacity 0.3s ease;
+      }
+      .modal-close:hover {
+        opacity: 0.7;
+      }
+      .mg-prev, .mg-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        padding: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        z-index: 10001;
+      }
+      .mg-prev:hover, .mg-next:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+      .mg-prev {
+        left: 10px;
+      }
+      .mg-next {
+        right: 10px;
+      }
+      @media(max-width: 650px) {
+        .mg-prev, .mg-next {
+          padding: 10px 8px;
+          font-size: 18px;
+        }
+        .modal-close {
+          font-size: 30px;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 
-      $.fn.mauGallery.methods.showItemTags(
-        $(this),
-        options.showTags,
-        options.tagsPosition,
-      );
+  showItemTags() {
+    const allTags = ["Tous"];
+    const images = this.element.querySelectorAll("img.gallery-item");
 
-      $(".gallery-item").on("click", function () {
-        $.fn.mauGallery.methods.openLightBox($(this), options.lightboxId);
+    // Collect unique tags
+    images.forEach((img) => {
+      const tag = img.getAttribute("data-gallery-tag");
+      if (tag && !allTags.includes(tag)) {
+        allTags.push(tag);
+      }
+    });
+
+    // Create filter buttons
+    const filterContainer = document.querySelector(".gallery-filters");
+    allTags.forEach((tag, index) => {
+      const button = document.createElement("button");
+      button.className = `nav-link ${index === 0 ? "active active-tag" : ""}`;
+      button.setAttribute("data-images-toggle", tag === "Tous" ? "all" : tag);
+      button.textContent = tag;
+
+      button.addEventListener("click", (e) => {
+        this.filterByTag(e.target);
+      });
+
+      filterContainer.appendChild(button);
+    });
+  }
+
+  filterByTag(button) {
+    if (button.classList.contains("active-tag")) return;
+
+    // Update active button
+    document.querySelectorAll(".nav-link").forEach((btn) => {
+      btn.classList.remove("active", "active-tag");
+    });
+    button.classList.add("active", "active-tag");
+
+    // Filter images
+    const tag = button.getAttribute("data-images-toggle");
+    const images = this.element.querySelectorAll("img.gallery-item");
+
+    images.forEach((img) => {
+      const itemTag = img.getAttribute("data-gallery-tag");
+      const column = img.closest(".item-column");
+
+      if (tag === "all" || itemTag === tag) {
+        column.style.display = "block";
+        column.style.opacity = "0";
+        setTimeout(() => {
+          column.style.transition = "opacity 0.3s ease";
+          column.style.opacity = "1";
+        }, 0);
+      } else {
+        column.style.display = "none";
+      }
+    });
+  }
+
+  attachGalleryClickListeners() {
+    this.element.querySelectorAll(".gallery-item").forEach((img) => {
+      img.addEventListener("click", () => {
+        this.openLightBox(img);
       });
     });
-  };
+  }
 
-  $.fn.mauGallery.defaults = {
-    columns: { xs: 1, sm: 2, md: 3, lg: 3, xl: 3 },
-    lightBox: true,
-    lightboxId: "myAwesomeLightbox",
-    showTags: true,
-    tagsPosition: "top",
-  };
+  openLightBox(element) {
+    const lightboxId = this.options.lightboxId;
 
-  $.fn.mauGallery.methods = {
-    createRowWrapper(element) {
-      element.wrap('<div class="gallery-container"></div>');
-    },
+    // Create lightbox HTML
+    const lightboxHTML = `
+      <div id="${lightboxId}" class="modal-lightbox" role="dialog" aria-modal="true">
+        <button class="modal-close" aria-label="Fermer la galerie">&times;</button>
+        <div class="modal-lightbox__container">
+          <img class="lightboxImage" src="${element.src}" alt="${element.alt}" />
+          <button class="mg-prev" aria-label="Image précédente">❮</button>
+          <button class="mg-next" aria-label="Image suivante">❯</button>
+        </div>
+      </div>
+    `;
 
-    openLightBox(element, lightboxId) {
-      $("body").append(
-        `<div id="${lightboxId}" class="modal-lightbox" role="dialog" aria-modal="true">
-          <button class="modal-close" aria-label="Fermer la galerie">&times;</button>
-          <div class="modal-lightbox__container">
-            <img class="lightboxImage" src="${element.attr("src")}" alt="${element.attr("alt")}" />
-            <button class="mg-prev" aria-label="Image précédente">❮</button>
-            <button class="mg-next" aria-label="Image suivante">❯</button>
-          </div>
-        </div>`,
-      );
+    document.body.insertAdjacentHTML("beforeend", lightboxHTML);
+    const modal = document.getElementById(lightboxId);
 
-      const modal = $(`#${lightboxId}`);
-      modal.on("click", function (e) {
-        if (e.target === this) $(this).remove();
-      });
-
-      modal.find(".modal-close").on("click", function () {
+    // Close on background click
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
         modal.remove();
-      });
+        document.removeEventListener("keydown", this.keyboardHandler);
+      }
+    });
 
-      modal.find(".mg-prev").on("click", function () {
-        $.fn.mauGallery.methods.prevImage(lightboxId);
-      });
+    // Close button
+    modal.querySelector(".modal-close").addEventListener("click", () => {
+      modal.remove();
+      document.removeEventListener("keydown", this.keyboardHandler);
+    });
 
-      modal.find(".mg-next").on("click", function () {
-        $.fn.mauGallery.methods.nextImage(lightboxId);
-      });
+    // Navigation
+    modal.querySelector(".mg-prev").addEventListener("click", () => {
+      this.prevImage(modal);
+    });
 
-      $(document).on("keydown", function (e) {
-        if ($(`#${lightboxId}`).length) {
-          if (e.key === "ArrowLeft")
-            $.fn.mauGallery.methods.prevImage(lightboxId);
-          if (e.key === "ArrowRight")
-            $.fn.mauGallery.methods.nextImage(lightboxId);
-          if (e.key === "Escape") $(`#${lightboxId}`).remove();
-        }
-      });
-    },
+    modal.querySelector(".mg-next").addEventListener("click", () => {
+      this.nextImage(modal);
+    });
 
-    prevImage(lightboxId) {
-      let activeImage = null;
-      $("img.gallery-item").each(function () {
-        if (
-          $(this).attr("src") === $(`#${lightboxId} .lightboxImage`).attr("src")
-        ) {
-          activeImage = $(this);
-        }
-      });
-
-      let activeTag = $(".nav-link.active-tag").data("images-toggle") || "all";
-      let imagesCollection = [];
-
-      if (activeTag === "all") {
-        $("img.gallery-item").each(function () {
-          imagesCollection.push($(this));
-        });
-      } else {
-        $("img.gallery-item").each(function () {
-          if ($(this).data("gallery-tag") === activeTag) {
-            imagesCollection.push($(this));
-          }
-        });
+    // Keyboard navigation
+    this.keyboardHandler = (e) => {
+      if (!document.getElementById(lightboxId)) {
+        document.removeEventListener("keydown", this.keyboardHandler);
+        return;
       }
 
-      let index = 0;
-      $(imagesCollection).each(function (i) {
-        if ($(activeImage).attr("src") === $(this).attr("src")) {
-          index = i;
-        }
-      });
-
-      let next =
-        imagesCollection[index - 1] ||
-        imagesCollection[imagesCollection.length - 1];
-      $(`#${lightboxId} .lightboxImage`)
-        .attr("src", $(next).attr("src"))
-        .attr("alt", $(next).attr("alt"));
-    },
-
-    nextImage(lightboxId) {
-      let activeImage = null;
-      $("img.gallery-item").each(function () {
-        if (
-          $(this).attr("src") === $(`#${lightboxId} .lightboxImage`).attr("src")
-        ) {
-          activeImage = $(this);
-        }
-      });
-
-      let activeTag = $(".nav-link.active-tag").data("images-toggle") || "all";
-      let imagesCollection = [];
-
-      if (activeTag === "all") {
-        $("img.gallery-item").each(function () {
-          imagesCollection.push($(this));
-        });
-      } else {
-        $("img.gallery-item").each(function () {
-          if ($(this).data("gallery-tag") === activeTag) {
-            imagesCollection.push($(this));
-          }
-        });
+      if (e.key === "ArrowLeft") this.prevImage(modal);
+      if (e.key === "ArrowRight") this.nextImage(modal);
+      if (e.key === "Escape") {
+        modal.remove();
+        document.removeEventListener("keydown", this.keyboardHandler);
       }
+    };
 
-      let index = 0;
-      $(imagesCollection).each(function (i) {
-        if ($(activeImage).attr("src") === $(this).attr("src")) {
-          index = i;
-        }
-      });
+    document.addEventListener("keydown", this.keyboardHandler);
+  }
 
-      let next = imagesCollection[index + 1] || imagesCollection[0];
-      $(`#${lightboxId} .lightboxImage`)
-        .attr("src", $(next).attr("src"))
-        .attr("alt", $(next).attr("alt"));
-    },
+  getFilteredImages() {
+    const activeTag =
+      document
+        .querySelector(".nav-link.active-tag")
+        ?.getAttribute("data-images-toggle") || "all";
+    const images = Array.from(
+      this.element.querySelectorAll("img.gallery-item"),
+    );
 
-    createLightBox(element, lightboxId) {
-      const style = `
-        <style>
-          .modal-lightbox{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center}.modal-lightbox__container{position:relative;width:90%;max-width:900px}.lightboxImage{width:100%;height:auto}.modal-close{position:absolute;top:10px;right:20px;background:0;border:0;color:#fff;font-size:40px;cursor:pointer;z-index:10000}.mg-prev,.mg-next{position:absolute;top:50%;transform:translateY(-50%);background-color:rgba(0,0,0,0.5);color:#fff;border:none;padding:15px;font-size:24px;cursor:pointer;transition:background-color 0.3s ease;z-index:10001}.mg-prev:hover,.mg-next:hover{background-color:rgba(0,0,0,0.8)}.mg-prev{left:10px}.mg-next{right:10px}@media(max-width:650px){.mg-prev,.mg-next{padding:10px 8px;font-size:18px}.modal-close{font-size:30px}}
-        </style>
-      `;
-      $("head").append(style);
-    },
+    if (activeTag === "all") {
+      return images;
+    }
 
-    showItemTags(element, showTags, tagsPosition) {
-      if (!showTags) return;
+    return images.filter(
+      (img) => img.getAttribute("data-gallery-tag") === activeTag,
+    );
+  }
 
-      let allTags = ["Tous"];
+  prevImage(modal) {
+    const currentSrc = modal.querySelector(".lightboxImage").src;
+    const images = this.getFilteredImages();
+    const currentIndex = images.findIndex((img) => img.src === currentSrc);
+    const nextIndex =
+      currentIndex - 1 >= 0 ? currentIndex - 1 : images.length - 1;
 
-      // ✅ FIX: element EST déjà .gallery, donc on l'utilise directement!
-      // Ne pas faire: element.find('.gallery') car ça cherche .gallery DANS .gallery
-      element.find("img.gallery-item").each(function () {
-        const tag = $(this).data("gallery-tag");
-        if (tag && !allTags.includes(tag)) {
-          allTags.push(tag);
-        }
-      });
+    modal.querySelector(".lightboxImage").src = images[nextIndex].src;
+    modal.querySelector(".lightboxImage").alt = images[nextIndex].alt;
+  }
 
-      const filterContainer = $(".gallery-filters");
+  nextImage(modal) {
+    const currentSrc = modal.querySelector(".lightboxImage").src;
+    const images = this.getFilteredImages();
+    const currentIndex = images.findIndex((img) => img.src === currentSrc);
+    const nextIndex = currentIndex + 1 < images.length ? currentIndex + 1 : 0;
 
-      allTags.forEach((tag, index) => {
-        const button = $(
-          `<button class="nav-link ${index === 0 ? "active active-tag" : ""}" data-images-toggle="${tag === "Tous" ? "all" : tag}">${tag}</button>`,
-        );
-        filterContainer.append(button);
-      });
+    modal.querySelector(".lightboxImage").src = images[nextIndex].src;
+    modal.querySelector(".lightboxImage").alt = images[nextIndex].alt;
+  }
+}
 
-      filterContainer.on("click", ".nav-link", function () {
-        $.fn.mauGallery.methods.filterByTag.call(this, element);
-      });
-    },
-
-    filterByTag() {
-      if ($(this).hasClass("active-tag")) return;
-
-      $(".nav-link").removeClass("active active-tag");
-      $(this).addClass("active active-tag");
-
-      const tag = $(this).data("images-toggle");
-      const gallery = $(".gallery");
-
-      gallery.find("img.gallery-item").each(function () {
-        const itemTag = $(this).data("gallery-tag");
-        if (tag === "all" || itemTag === tag) {
-          $(this).closest(".item-column").fadeIn(300);
-        } else {
-          $(this).closest(".item-column").hide();
-        }
-      });
-    },
-  };
-})(jQuery);
+// Auto-initialize all galleries
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".gallery").forEach((gallery) => {
+    new MauGallery(gallery, {
+      columns: { xs: 1, sm: 2, md: 3, lg: 3, xl: 3 },
+      lightBox: true,
+      lightboxId: "myAwesomeLightbox",
+      showTags: true,
+      tagsPosition: "top",
+    });
+  });
+});

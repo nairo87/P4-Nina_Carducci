@@ -9,6 +9,10 @@
     />
     <meta name="theme-color" content="#fff" />
 
+    <!-- ✅ Performance: Preload critical CSS -->
+    <link rel="preload" href="./assets/style.css" as="style" />
+
+    <!-- OpenGraph -->
     <meta property="og:title" content="Nina Carducci - Photographe Bordeaux" />
     <meta
       property="og:description"
@@ -50,16 +54,70 @@
 
     <title>Nina Carducci - Photographe Bordeaux</title>
 
-    <link rel="stylesheet" href="./assets/style.css" />
+    <!-- ✅ Critical CSS inline for faster first paint (NO JQUERY!) -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        max-width: 1920px;
+        margin: auto;
+        font-family: Inter, sans-serif;
+        line-height: 1.5;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+      .top-header {
+        background-color: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        padding: 30px 100px;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .top-header .name {
+        font-size: 26px;
+        font-weight: 600;
+      }
+      .nav ul {
+        display: flex;
+        list-style: none;
+        font-size: 14px;
+        gap: 20px;
+      }
+      .nav a {
+        text-decoration: none;
+        color: #000;
+        transition: color 0.3s ease;
+      }
+      .nav a:hover {
+        color: #beb45a;
+      }
+    </style>
 
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"
-      defer
-    ></script>
-    <script src="./assets/maugallery.js" defer></script>
-    <script src="./assets/scripts.js" defer></script>
+    <!-- ✅ Non-critical CSS async loaded (NO JQUERY BLOCKING!) -->
+    <link
+      rel="stylesheet"
+      href="./assets/style.css"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript><link rel="stylesheet" href="./assets/style.css" /></noscript>
+
+    <!-- ✅ VANILLA JAVASCRIPT - NO JQUERY DEPENDENCY! -->
+    <script src="./assets/maugallery_VANILLA.js" defer></script>
+    <script src="./assets/scripts_VANILLA.js" defer></script>
   </head>
 
   <body>
@@ -270,70 +328,4 @@
       </section>
     </footer>
   </body>
-  <script>
-    // Images de galerie - injected en JS pour optimisation
-    const galleryImages = [
-      {
-        tag: "Concert",
-        src: "./assets/images/gallery/concerts/aaron-paul.webp",
-        alt: "Concert photography - Nina Carducci",
-      },
-      {
-        tag: "Entreprises",
-        src: "./assets/images/gallery/entreprise/ali-morshedlou.webp",
-        alt: "Portrait professionnel entreprise",
-      },
-      {
-        tag: "Entreprises",
-        src: "./assets/images/gallery/entreprise/jason-goodman.webp",
-        alt: "Événement d'entreprise photo",
-      },
-      {
-        tag: "Mariages",
-        src: "./assets/images/gallery/mariage/hannah-busing.webp",
-        alt: "Mariage - photo Nina Carducci",
-      },
-      {
-        tag: "Portrait",
-        src: "./assets/images/gallery/portraits/ade-tunji.webp",
-        alt: "Portrait studio de qualité",
-      },
-      {
-        tag: "Mariages",
-        src: "./assets/images/gallery/mariage/jakob-owens.webp",
-        alt: "Cérémonie mariage Bordeaux",
-      },
-      {
-        tag: "Portrait",
-        src: "./assets/images/gallery/portraits/nino-van-prattenburg.webp",
-        alt: "Portrait noir et blanc",
-      },
-      {
-        tag: "Concert",
-        src: "./assets/images/gallery/concerts/austin-neill.webp",
-        alt: "Concert live photography",
-      },
-      {
-        tag: "Entreprises",
-        src: "./assets/images/gallery/entreprise/mateus-campos-felipe.webp",
-        alt: "Séance photo entreprise",
-      },
-    ];
-
-    // Render gallery
-    const gallery = document.querySelector(".gallery");
-    galleryImages.forEach((img) => {
-      const div = document.createElement("div");
-      div.className = "item-column";
-      const imgEl = document.createElement("img");
-      imgEl.className = "gallery-item";
-      imgEl.setAttribute("data-gallery-tag", img.tag);
-      imgEl.src = img.src;
-      imgEl.alt = img.alt;
-      imgEl.loading = "lazy";
-      imgEl.decoding = "async";
-      div.appendChild(imgEl);
-      gallery.appendChild(div);
-    });
-  </script>
 </html>
