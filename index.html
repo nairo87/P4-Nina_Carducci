@@ -1,773 +1,71 @@
 <!doctype html>
 <html lang="fr">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- CSS inliné : supprime la requête render-blocking -->
-    <style>
-      /* ============================================================
-   BASE
-   ============================================================ */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
-
-      body {
-        max-width: 1920px;
-        margin: auto;
-        padding: 0;
-      }
-
-      * {
-        font-family: "Inter", sans-serif;
-        font-style: normal;
-      }
-
-      .visually-hidden {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      /* ============================================================
-   GRID / LAYOUT UTILITIES  (replaces Bootstrap grid)
-   ============================================================ */
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        margin-left: -8px;
-        margin-right: -8px;
-      }
-
-      /* Column base */
-      [class*="col-"] {
-        padding-left: 8px;
-        padding-right: 8px;
-        width: 100%;
-      }
-
-      /* xs  (default – 1 column) */
-      .col-12 {
-        width: 100%;
-      }
-      .col-6 {
-        width: 50%;
-      }
-      .col-4 {
-        width: 33.3333%;
-      }
-      .col-3 {
-        width: 25%;
-      }
-
-      /* sm ≥ 576px */
-      @media (min-width: 576px) {
-        .col-sm-6 {
-          width: 50%;
-        }
-        .col-sm-4 {
-          width: 33.3333%;
-        }
-        .col-sm-3 {
-          width: 25%;
-        }
-      }
-      /* md ≥ 768px */
-      @media (min-width: 768px) {
-        .col-md-4 {
-          width: 33.3333%;
-        }
-        .col-md-3 {
-          width: 25%;
-        }
-      }
-      /* lg ≥ 992px */
-      @media (min-width: 992px) {
-        .col-lg-4 {
-          width: 33.3333%;
-        }
-        .col-lg-3 {
-          width: 25%;
-        }
-      }
-      /* xl ≥ 1200px */
-      @media (min-width: 1200px) {
-        .col-xl-4 {
-          width: 33.3333%;
-        }
-        .col-xl-3 {
-          width: 25%;
-        }
-      }
-
-      .container {
-        width: 100%;
-        padding-left: 15px;
-        padding-right: 15px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .py-3 {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-      }
-      .my-4 {
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-      }
-      .mb-4 {
-        margin-bottom: 1.5rem;
-      }
-
-      .d-block {
-        display: block;
-      }
-      .w-100 {
-        width: 100%;
-      }
-      .img-fluid {
-        max-width: 100%;
-        height: auto;
-      }
-      .fade {
-        transition: opacity 0.15s linear;
-      }
-
-      /* ============================================================
-   HEADER / NAV
-   ============================================================ */
-      .top-header {
-        background-color: white;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        display: flex;
-        justify-content: space-between;
-        padding-inline: 100px;
-        padding-block: 30px;
-        align-items: center;
-      }
-
-      .top-header .name {
-        font-size: 26px;
-      }
-
-      .nav ul {
-        display: flex;
-        list-style-type: none;
-        font-size: 14px;
-        margin-bottom: 0;
-        padding: 0;
-      }
-
-      .nav li {
-        padding-inline: 10px;
-      }
-
-      .nav a {
-        text-decoration: none;
-        color: #000;
-      }
-
-      .social-link img {
-        width: 20px;
-      }
-
-      /* ============================================================
-   CAROUSEL  (replaces Bootstrap carousel)
-   ============================================================ */
-      .carousel {
-        position: relative;
-        overflow: hidden;
-      }
-
-      .carousel-inner {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-      }
-
-      .carousel-item {
-        display: none;
-        position: relative;
-        width: 100%;
-        transition: opacity 0.6s ease;
-        opacity: 0;
-      }
-
-      .carousel-item.active {
-        display: block;
-        opacity: 1;
-      }
-
-      .carousel-item img {
-        display: block;
-        width: 100%;
-        height: auto;
-        max-height: 90vh;
-        object-fit: cover;
-      }
-
-      /* Indicators */
-      .carousel-indicators {
-        position: absolute;
-        bottom: 16px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 8px;
-        z-index: 10;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      .carousel-indicators button {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        border: 2px solid #fff;
-        background: transparent;
-        cursor: pointer;
-        padding: 0;
-        transition: background 0.3s;
-      }
-
-      .carousel-indicators button.active,
-      .carousel-indicators button:hover {
-        background: #fff;
-      }
-
-      /* Prev / Next */
-      .carousel-control-prev,
-      .carousel-control-next {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        background: rgba(0, 0, 0, 0.35);
-        border: none;
-        cursor: pointer;
-        border-radius: 2px;
-        transition: background 0.2s;
-      }
-
-      .carousel-control-prev:hover,
-      .carousel-control-next:hover {
-        background: rgba(0, 0, 0, 0.6);
-      }
-
-      .carousel-control-prev {
-        left: 12px;
-      }
-      .carousel-control-next {
-        right: 12px;
-      }
-
-      .carousel-control-prev-icon,
-      .carousel-control-next-icon {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: contain;
-      }
-
-      .carousel-control-prev-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
-      }
-      .carousel-control-next-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3E%3Cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-      }
-
-      /* ============================================================
-   ABOUT
-   ============================================================ */
-      #about {
-        display: flex;
-        background-color: #f6d2b8;
-        padding-inline: 100px;
-        padding-block: 100px;
-        position: relative;
-      }
-
-      .picture.left::before {
-        content: " ";
-        background-color: #e5975f;
-        width: 374px;
-        height: 329px;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        z-index: -1;
-      }
-
-      .picture {
-        flex: 1;
-        margin: 0 20px;
-        z-index: 0;
-      }
-
-      .picture img {
-        width: 100%;
-      }
-
-      #about-me {
-        flex: 2;
-      }
-
-      .about-me__title {
-        margin-top: 1em;
-        margin-bottom: 60px;
-        font-size: 30px;
-      }
-
-      .about-me__introduction {
-        font-family: "Spectral", serif;
-        font-weight: 800;
-        font-style: italic;
-        width: 60%;
-      }
-
-      #about-me p {
-        width: 80%;
-        font-size: 14px;
-      }
-
-      /* ============================================================
-   GALLERY
-   ============================================================ */
-      .title {
-        text-align: center;
-        padding-block: 2em;
-      }
-
-      .gallery .nav {
-        justify-content: center;
-      }
-
-      /* Tags nav pills */
-      .nav-pills {
-        display: flex;
-        flex-wrap: wrap;
-        padding-left: 0;
-        list-style: none;
-      }
-
-      .nav-pills .nav-link {
-        color: #000;
-        display: block;
-        padding: 0.5rem 1rem;
-        text-decoration: none;
-        cursor: pointer;
-        border-radius: 0;
-        transition:
-          background 0.2s,
-          color 0.2s;
-      }
-
-      .nav-pills .nav-link.active,
-      .nav-pills .nav-link.active-tag {
-        color: #fff;
-        background-color: #beb45a;
-      }
-
-      .item-column {
-        position: relative;
-        margin-bottom: 0 !important;
-        padding: 0;
-      }
-
-      .item-column::after {
-        content: "";
-        display: block;
-        padding-bottom: 100%;
-      }
-
-      .gallery-item {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        padding: 0.5em;
-        cursor: pointer;
-        transition: opacity 0.2s;
-      }
-
-      .gallery-item:hover {
-        opacity: 0.85;
-      }
-
-      /* ============================================================
-   LIGHTBOX / MODAL  (replaces Bootstrap modal)
-   ============================================================ */
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.75);
-        z-index: 9000;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.25s;
-      }
-
-      .modal-overlay.show {
-        display: flex;
-        opacity: 1;
-      }
-
-      .modal-dialog {
-        position: relative;
-        max-width: 90vw;
-        max-height: 90vh;
-        margin: auto;
-      }
-
-      .modal-content {
-        background: #fff;
-        border-radius: 2px;
-        position: relative;
-        padding: 1rem;
-      }
-
-      .modal-close {
-        position: absolute;
-        top: -14px;
-        right: -14px;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        border: none;
-        background: #fff;
-        font-size: 18px;
-        line-height: 1;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      }
-
-      .modal-body {
-        position: relative;
-        display: flex;
-        align-items: center;
-      }
-
-      .modal-body .lightboxImage {
-        max-width: 80vw;
-        max-height: 80vh;
-        object-fit: contain;
-      }
-
-      .mg-prev,
-      .mg-next {
-        width: 30px;
-        height: 30px;
-        border-radius: 0;
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        font-size: 24px;
-        cursor: pointer;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: white;
-        border: none;
-        z-index: 5;
-        line-height: 1;
-      }
-
-      .mg-prev {
-        left: -15px;
-      }
-      .mg-next {
-        right: -15px;
-      }
-
-      /* ============================================================
-   QUOTE
-   ============================================================ */
-      .quote {
-        font-family: "Spectral", serif;
-        font-style: italic;
-        width: 70%;
-        margin: auto;
-        padding-block: 3em;
-      }
-
-      .quote__text {
-        font-family: "Spectral", serif;
-        font-style: italic;
-        font-weight: 300;
-        font-size: 1.2rem;
-      }
-
-      .quote__author {
-        font-family: "Spectral", serif;
-        font-weight: 800;
-        font-size: 22px;
-      }
-
-      /* ============================================================
-   SERVICES
-   ============================================================ */
-      #services {
-        margin: auto;
-        background-color: #a8d5d8;
-        position: relative;
-      }
-
-      #services .container::before {
-        content: " ";
-        background-color: #1c6474;
-        position: absolute;
-        width: 100%;
-        height: 30%;
-        bottom: 0;
-        left: 0;
-        z-index: 0;
-      }
-
-      #services .container {
-        justify-content: space-between;
-        display: flex;
-        padding: 2em 0;
-      }
-
-      .service {
-        background-color: white;
-        max-width: 390px;
-        width: 30%;
-        height: 337px;
-        padding: 1em;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        z-index: 1;
-      }
-
-      /* ============================================================
-   CONTACT
-   ============================================================ */
-      #contact {
-        margin: auto;
-        background-color: #d8d3a8;
-        position: relative;
-        padding-inline: 100px;
-        padding-block: 100px;
-      }
-
-      #contact .container {
-        display: flex;
-      }
-
-      .picture.right::before {
-        content: " ";
-        background-color: #beb45a;
-        width: 374px;
-        height: 329px;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        z-index: -1;
-      }
-
-      .form-container {
-        flex: 2;
-      }
-
-      form {
-        display: flex;
-        flex-direction: column;
-        width: 70%;
-        align-items: flex-start;
-      }
-
-      form input {
-        width: 100%;
-        background-color: transparent;
-        border: solid 1px;
-        height: 2.5em;
-        margin-bottom: 20px;
-      }
-
-      form textarea {
-        width: 100%;
-        background-color: transparent;
-        border: solid 1px;
-        height: 5em;
-        line-height: 2.5em;
-        font-size: 1.2em;
-        margin-bottom: 20px;
-      }
-
-      input[type="submit"] {
-        background-color: #beb45a;
-        padding: 0.5em 1em;
-        cursor: pointer;
-      }
-
-      /* ============================================================
-   RESPONSIVE
-   ============================================================ */
-      @media all and (max-width: 1180px) {
-        .picture {
-          flex: 2;
-        }
-        #about,
-        #contact .container {
-          align-items: center;
-        }
-        .about-me__title {
-          margin-top: 0;
-          margin-bottom: 1em;
-        }
-        #about-me h6,
-        #about-me p {
-          width: 100%;
-        }
-      }
-
-      @media all and (max-width: 1000px) {
-        #about {
-          flex-direction: column;
-        }
-        .picture {
-          width: 50%;
-        }
-        .picture.left::before {
-          width: 100%;
-          height: 30%;
-          position: absolute;
-          bottom: auto;
-          top: 0;
-          left: 0;
-          z-index: -1;
-        }
-        .about-me__title {
-          text-align: center;
-          margin-top: 1em;
-        }
-        #services .container {
-          flex-direction: column;
-        }
-        .service {
-          width: 100%;
-          max-width: 100%;
-          height: auto;
-          margin: 2em 0;
-        }
-        .service__description {
-          margin-bottom: 1em;
-        }
-        #services .container::before {
-          width: 30%;
-          height: 100%;
-          bottom: 0;
-          right: 0;
-          left: auto;
-          z-index: 0;
-        }
-        #contact .container {
-          flex-direction: column;
-        }
-        #contact .picture.right {
-          margin-top: 1em;
-        }
-        .picture.right::before {
-          width: 100%;
-          height: 30%;
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          z-index: -1;
-        }
-      }
-
-      @media all and (max-width: 650px) {
-        .top-header {
-          flex-direction: column;
-          padding-inline: 0;
-        }
-        .top-header .nav,
-        .top-header .nav ul {
-          width: 100%;
-          padding: 0;
-        }
-        .top-header .nav li {
-          flex: 1;
-          padding-block: 1em;
-          text-align: center;
-        }
-        .picture.left::before,
-        .picture.right::before {
-          height: 150px;
-        }
-        #services .container {
-          align-items: center;
-        }
-        .service {
-          max-width: 90%;
-        }
-        #about,
-        #contact {
-          padding-inline: 2em;
-          padding-block: 2em;
-        }
-        form {
-          width: 100%;
-        }
-        .picture {
-          width: 80%;
-        }
-      }
-    </style>
-    <!-- Chargement asynchrone pour mise en cache lors des visites suivantes -->
-    <link
-      rel="preload"
-      href="./assets/style.css"
-      as="style"
-      onload="
-        this.onload = null;
-        this.rel = 'stylesheet';
-      "
-    />
-    <noscript><link rel="stylesheet" href="./assets/style.css" /></noscript>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta charset="UTF-8" />
-    <link
-      rel="preload"
-      as="image"
-      href="./assets/images/slider/ryoji-iwata-wUZjnOv7t0g-unsplash.webp"
-      fetchpriority="high"
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Nina Carducci - Photographe professionnelle à Bordeaux. Spécialisée en portraits, mariages, événements d'entreprise et concerts."
     />
+    <meta name="theme-color" content="#fff" />
+
+    <meta property="og:title" content="Nina Carducci - Photographe Bordeaux" />
+    <meta
+      property="og:description"
+      content="Photographe professionnelle à Bordeaux, spécialisée en portraits, mariages, événements et concerts."
+    />
+    <meta property="og:type" content="business.business" />
+    <meta property="og:url" content="https://ninacarducci.com" />
+    <meta
+      property="og:image"
+      content="https://ninacarducci.com/assets/images/nina.webp"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Nina Carducci",
+        "description": "Photographe professionnelle spécialisée en portraits, mariages, événements et concerts",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "68 avenue Alsace-Lorraine",
+          "addressLocality": "Bordeaux",
+          "postalCode": "33200",
+          "addressCountry": "FR"
+        },
+        "telephone": "05 56 67 78 89",
+        "url": "https://ninacarducci.com",
+        "image": "https://ninacarducci.com/assets/images/nina.webp",
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "10:00",
+          "closes": "19:00"
+        },
+        "sameAs": ["https://www.instagram.com/ninacarducci.photo/"],
+        "priceRange": "50€ - 400€"
+      }
+    </script>
+
+    <title>Nina Carducci - Photographe Bordeaux</title>
+
+    <link rel="stylesheet" href="./assets/style.css" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./assets/maugallery.js" defer></script>
     <script src="./assets/scripts.js" defer></script>
   </head>
+
   <body>
-    <div class="top-header">
-      <h3 class="name">Nina Carducci</h3>
-      <div class="nav">
+    <header class="top-header">
+      <h1 class="name">Nina Carducci</h1>
+      <nav class="nav">
         <ul>
           <li><a href="#about">À propos</a></li>
           <li><a href="#gallery">Galerie</a></li>
@@ -778,256 +76,264 @@
               class="social-link"
               href="https://www.instagram.com/ninacarducci.photo/?hl=fr"
               target="_blank"
+              rel="noopener"
               ><img
                 src="assets/images/instagram.webp"
-                alt="Instagram de Nina Carducci"
+                alt="Instagram Nina Carducci"
+                loading="lazy"
+                width="20"
+                height="20"
             /></a>
           </li>
         </ul>
-      </div>
-    </div>
-    <div id="header">
-      <div id="carousel" class="carousel">
-        <div class="carousel-indicators">
-          <button
-            type="button"
-            data-slide-to="0"
-            class="active"
-            aria-current="true"
-            aria-label="Slide 1"
-          ></button>
-          <button type="button" data-slide-to="1" aria-label="Slide 2"></button>
-          <button type="button" data-slide-to="2" aria-label="Slide 3"></button>
-        </div>
+      </nav>
+    </header>
+    <main>
+      <section id="header" class="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active">
+          <article class="carousel-item active">
             <img
               src="./assets/images/slider/ryoji-iwata.webp"
-              class="d-block w-100"
-              alt="Homme en costume marchant dans la rue"
+              alt="Photographe Nina Carducci en Île-de-France"
               fetchpriority="high"
+              loading="eager"
+              decoding="async"
+              width="1920"
+              height="1080"
             />
-          </div>
-          <div class="carousel-item">
+          </article>
+          <article class="carousel-item">
             <img
               src="./assets/images/slider/nicholas-green.webp"
-              class="d-block w-100"
-              alt="Foule en liesse lors d'un concert"
+              alt="Séance photo événement"
               loading="lazy"
+              decoding="async"
+              width="1920"
+              height="1080"
             />
-          </div>
-          <div class="carousel-item">
+          </article>
+          <article class="carousel-item">
             <img
               src="./assets/images/slider/edward-cisneros.webp"
-              class="d-block w-100"
-              alt="Mariés s'embrassant lors de leur cérémonie"
+              alt="Mariage - Nina Carducci photographe"
               loading="lazy"
+              decoding="async"
+              width="1920"
+              height="1080"
             />
-          </div>
+          </article>
         </div>
-        <button
-          class="carousel-control-prev"
-          type="button"
-          data-slide="prev"
-          aria-label="Slide précédente"
-        >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button
-          class="carousel-control-next"
-          type="button"
-          data-slide="next"
-          aria-label="Slide suivante"
-        >
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-    </div>
-    <div id="about">
-      <div class="picture left">
-        <img
-          src="./assets/images/nina.webp"
-          alt="Portrait de Nina Carducci, photographe"
-        />
-      </div>
-      <div id="about-me">
-        <h3 class="about-me__title">A propos de moi</h3>
-        <h6 class="about-me__introduction">
-          Devenir photographe était pour moi une évidence. Comme si j'y étais
-          prédestiné. Saisir un moment, une émotion, une situation, un endroit,
-          une lumière et les rendre immortels, voilà ce qui me fait vibrer.
-        </h6>
-        <p>
-          Nous passons notre vie à chercher le bonheur, et lorsque nous y
-          touchons, nous n'avons qu'une envie : le figer au travers de
-          photographies pour le savourer avec les personnes qui sont importantes
-          à nos yeux, ou le partager au plus grand nombre. C'est ce que je vous
-          propose : saisir ces merveilleux moments au travers de mon regard, mon
-          approche, ma technique. Rendre ces moments immortels, afin que vous
-          puissiez y puiser de l'amour, du bonheur, de la tendresse et de
-          lumière à chaque fois que vous poserez les yeux sur vos photos.
-        </p>
-      </div>
-    </div>
-    <div id="gallery">
-      <h3 class="title">Portfolio</h3>
-      <div class="container py-3">
-        <div class="gallery" style="display: none">
+        <button class="carousel-prev" aria-label="Image précédente">❮</button>
+        <button class="carousel-next" aria-label="Image suivante">❯</button>
+      </section>
+
+      <section id="about">
+        <div class="picture left">
           <img
-            data-gallery-tag="Concert"
-            class="gallery-item"
-            src="./assets/images/gallery/concerts/aaron-paul-wnX-fXzB6Cw-unsplash.webp"
-            alt="Photographe de concert capturant un artiste sur scène"
-          />
-          <img
-            data-gallery-tag="Entreprises"
-            class="gallery-item"
-            src="./assets/images/gallery/entreprise/ali-morshedlou-WMD64tMfc4k-unsplash.webp"
-            alt="Portrait professionnel d'un homme en costume"
-          />
-          <img
-            data-gallery-tag="Entreprises"
-            class="gallery-item"
-            src="./assets/images/gallery/entreprise/jason-goodman-tHO1_OuKbg0-unsplash.webp"
-            alt="Réunion d'équipe en entreprise"
-          />
-          <img
-            data-gallery-tag="Mariages"
-            class="gallery-item"
-            src="./assets/images/gallery/mariage/hannah-busing-RvF2R_qMpRk-unsplash.webp"
-            alt="Mains des mariés enlacées"
-          />
-          <img
-            data-gallery-tag="Portrait"
-            class="gallery-item"
-            src="./assets/images/gallery/portraits/ade-tunji-rVkhWWZFAtQ-unsplash.webp"
-            alt="Portrait d'un homme aux yeux fermés"
-          />
-          <img
-            data-gallery-tag="Mariages"
-            class="gallery-item"
-            src="./assets/images/gallery/mariage/jakob-owens-SiniLJkXhMc-unsplash.webp"
-            alt="Couple de mariés devant un fond lumineux"
-          />
-          <img
-            data-gallery-tag="Portrait"
-            class="gallery-item"
-            src="./assets/images/gallery/portraits/nino-van-prattenburg--443cl1uR_8-unsplash.webp"
-            alt="Portrait d'une femme derrière un grillage"
-          />
-          <img
-            data-gallery-tag="Concert"
-            class="gallery-item"
-            src="./assets/images/gallery/concerts/austin-neill-hgO1wFPXl3I-unsplash.webp"
-            alt="Chanteur sur scène les bras levés"
-          />
-          <img
-            data-gallery-tag="Entreprises"
-            class="gallery-item"
-            src="./assets/images/gallery/entreprise/mateus-campos-felipe-Fsgzm8N0hIY-unsplash.webp"
-            alt="Femme souriante travaillant sur ordinateur"
+            src="./assets/images/nina.webp"
+            alt="Portrait professionnel Nina Carducci"
+            loading="lazy"
+            decoding="async"
           />
         </div>
-      </div>
-      <div class="quote">
-        <figure>
+        <div id="about-me">
+          <h2 class="about-me__title">A propos de moi</h2>
+          <p class="about-me__introduction">
+            Devenir photographe était pour moi une évidence. Comme si j'y étais
+            prédestiné. Saisir un moment, une émotion, une situation, un
+            endroit, une lumière et les rendre immortels, voilà ce qui me fait
+            vibrer.
+          </p>
+          <p>
+            Nous passons notre vie à chercher le bonheur, et lorsque nous y
+            touchons, nous n'avons qu'une envie : le figer au travers de
+            photographies pour le savourer avec les personnes qui sont
+            importantes à nos yeux, ou le partager au plus grand nombre. C'est
+            ce que je vous propose : saisir ces merveilleux moments au travers
+            de mon regard, mon approche, ma technique. Rendre ces moments
+            immortels, afin que vous puissiez y puiser de l'amour, du bonheur,
+            de la tendresse et de lumière à chaque fois que vous poserez les
+            yeux sur vos photos.
+          </p>
+        </div>
+      </section>
+
+      <section id="gallery">
+        <h2 class="title">Portfolio</h2>
+        <div class="gallery-filters"></div>
+        <div class="gallery"></div>
+        <figure class="quote">
           <blockquote>
-            <p class="quote__text">
+            <h3 class="quote__text">
               Un portrait n'est pas une ressemblance. Dès lors qu'une émotion ou
               qu'un fait est traduit en photo, il cesse d'être un fait pour
               devenir une opinion. L'inexactitude n'existe pas en photographie.
               Toutes les photos sont exactes. Aucune d'elles n'est la vérité.
-            </p>
+            </h3>
           </blockquote>
           <figcaption class="quote__author">- Richard Avedon</figcaption>
         </figure>
-      </div>
-    </div>
-    <div id="services">
-      <h3 class="title">Mes services</h3>
-      <div class="container">
-        <div class="service">
-          <div class="service__description">
-            <h3>Shooting photo</h3>
-            <p>
-              Pour capturer vos moments les plus précieux et garder un souvenir
-              impérissable. Je me déplace en Île-de-France pour réaliser vos
-              photos
-            </p>
-          </div>
-          <div class="service__price">
-            <h4>350€/demi journée</h4>
-            <span>Matériel, déplacement inclus</span>
-          </div>
+      </section>
+
+      <section id="services">
+        <h2 class="title">Mes services</h2>
+        <div class="services-container">
+          <article class="service">
+            <div class="service__description">
+              <h3>Shooting photo</h3>
+              <p>
+                Pour capturer vos moments les plus précieux et garder un
+                souvenir impérissable. Je me déplace en Île-de-France pour
+                réaliser vos photos
+              </p>
+            </div>
+            <div class="service__price">
+              <h4>350€/demi journée</h4>
+              <span>Matériel, déplacement inclus</span>
+            </div>
+          </article>
+          <article class="service">
+            <div class="service__description">
+              <h3>Retouches</h3>
+              <p>
+                Vous souhaitez retoucher vos photos pour un résultat
+                professionnel ? Bénéficier d'un rendu optimal pour vos
+                publications
+              </p>
+            </div>
+            <div class="service__price">
+              <h4>50€/photo</h4>
+              <span>2 AR par photo</span>
+            </div>
+          </article>
+          <article class="service">
+            <div class="service__description">
+              <h3>Album photos</h3>
+              <p>
+                Partagez avec vos proches et vos clients les photos des moments
+                partagés ensemble à travers un album photo personnalisé
+              </p>
+            </div>
+            <div class="service__price">
+              <h4>400€ album A4</h4>
+              <span>30 pages recto/verso</span>
+            </div>
+          </article>
         </div>
-        <div class="service">
-          <div class="service__description">
-            <h3>Retouches</h3>
-            <p>
-              Vous souhaitez retoucher vos photos pour un résultat professionnel
-              ? Bénéficier d'un rendu optimal pour vos publications
-            </p>
-          </div>
-          <div class="service__price">
-            <h4>50€/photo</h4>
-            <span>2 AR par photo</span>
-          </div>
-        </div>
-        <div class="service">
-          <div class="service__description">
-            <h3>Album photos</h3>
-            <p>
-              Partagez avec vos proches et vos clients les photos des moments
-              partagés ensemble à travers un album photo personnalisé
-            </p>
-          </div>
-          <div class="service__price">
-            <h4>400€ album A4</h4>
-            <span>30 pages recto/verso</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="quote">
-      <figure>
+      </section>
+
+      <figure class="quote">
         <blockquote>
-          <p class="quote__text">
+          <h3 class="quote__text">
             De manière inconsciente, je crois, je guette un regard, une
             expression, des traits ou une nostalgie capable de résumer ou plus
             exactement de révéler une vie
-          </p>
+          </h3>
         </blockquote>
         <figcaption class="quote__author">- Richard Avedon</figcaption>
       </figure>
-    </div>
-    <div id="contact">
-      <div class="container">
-        <div class="form-container">
-          <h3>Une question ? Une demande de devis ?</h3>
-          <p>
-            N'hésitez pas à m'écrire ! Je vous répondrais en moins de 24 heures
-          </p>
-          <form action="" method="post">
-            <label for="nom">Nom</label>
-            <input type="text" name="nom" id="nom" />
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" />
-            <label for="message">Message</label>
-            <textarea
-              name="message"
-              id="message"
-              cols="30"
-              rows="10"
-            ></textarea>
-            <input type="submit" value="Envoyer" />
-          </form>
+    </main>
+    <footer>
+      <section id="contact">
+        <div class="contact-container">
+          <div class="form-container">
+            <h2>Une question ? Une demande de devis ?</h2>
+            <p>
+              N'hésitez pas à m'écrire ! Je vous répondrais en moins de 24
+              heures
+            </p>
+            <form action="" method="post" novalidate>
+              <label for="nom">Nom</label>
+              <input type="text" name="nom" id="nom" required />
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" required />
+              <label for="message">Message</label>
+              <textarea
+                name="message"
+                id="message"
+                cols="30"
+                rows="10"
+                required
+              ></textarea>
+              <input type="submit" value="Envoyer" />
+            </form>
+          </div>
+          <div class="picture right">
+            <img
+              src="./assets/images/camera.webp"
+              alt="Appareil photo vintage"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         </div>
-        <div class="picture right">
-          <img src="./assets/images/camera.webp" alt="Appareil photo reflex" />
-        </div>
-      </div>
-    </div>
+      </section>
+    </footer>
   </body>
+  <script>
+    // Images de galerie - injected en JS pour optimisation
+    const galleryImages = [
+      {
+        tag: "Concert",
+        src: "./assets/images/gallery/concerts/aaron-paul.webp",
+        alt: "Concert photography - Nina Carducci",
+      },
+      {
+        tag: "Entreprises",
+        src: "./assets/images/gallery/entreprise/ali-morshedlou.webp",
+        alt: "Portrait professionnel entreprise",
+      },
+      {
+        tag: "Entreprises",
+        src: "./assets/images/gallery/entreprise/jason-goodman.webp",
+        alt: "Événement d'entreprise photo",
+      },
+      {
+        tag: "Mariages",
+        src: "./assets/images/gallery/mariage/hannah-busing.webp",
+        alt: "Mariage - photo Nina Carducci",
+      },
+      {
+        tag: "Portrait",
+        src: "./assets/images/gallery/portraits/ade-tunji.webp",
+        alt: "Portrait studio de qualité",
+      },
+      {
+        tag: "Mariages",
+        src: "./assets/images/gallery/mariage/jakob-owens.webp",
+        alt: "Cérémonie mariage Bordeaux",
+      },
+      {
+        tag: "Portrait",
+        src: "./assets/images/gallery/portraits/nino-van-prattenburg.webp",
+        alt: "Portrait noir et blanc",
+      },
+      {
+        tag: "Concert",
+        src: "./assets/images/gallery/concerts/austin-neill.webp",
+        alt: "Concert live photography",
+      },
+      {
+        tag: "Entreprises",
+        src: "./assets/images/gallery/entreprise/mateus-campos-felipe.webp",
+        alt: "Séance photo entreprise",
+      },
+    ];
+
+    // Render gallery
+    const gallery = document.querySelector(".gallery");
+    galleryImages.forEach((img) => {
+      const div = document.createElement("div");
+      div.className = "item-column";
+      const imgEl = document.createElement("img");
+      imgEl.className = "gallery-item";
+      imgEl.setAttribute("data-gallery-tag", img.tag);
+      imgEl.src = img.src;
+      imgEl.alt = img.alt;
+      imgEl.loading = "lazy";
+      imgEl.decoding = "async";
+      div.appendChild(imgEl);
+      gallery.appendChild(div);
+    });
+  </script>
 </html>
